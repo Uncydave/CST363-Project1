@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+    crossorigin="anonymous"></script>
+
+
+<body>
+    <h1>Valid Burrowers</h1>
+    <table id="tableData">
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Adddress</th>
+            <th>City</th>
+            <th>State</th>
+            <th>Zip</th>
+            <th>Phone</th>
+        </tr>
+    </table>
+
+    <h1>Add Location Page</h1>
+    <iframe name="hiddenFrame" width="0" height="0" border="0" style="display: none;"></iframe>
+    <form action="./cgi-bin/BorrowerAPIAdd.py" method="post">
+        Name:
+        <input type="text" name="borrowerName" />
+        <br/>Address:
+        <input type="text" name="borrowerAddress" />
+        <br/>City:
+        <input type="text" name="borrowerCity" />
+        <br/>State:
+        <input type="text" name="borrowerState" />
+        <br/>Zip:
+        <input type="text" name="borrowerZip" />
+        <br/>Phone:
+        <input type="text" name="borrowerPhone" />
+        <br/>
+
+        <input type="submit" value="Submit-Location" name="Submit" />
+    </form>
+    
+</body>
+<script>
+   
+    function drawTable(data) {
+     
+        for (var i = 0; i < data.length; i++) {
+            drawRow(data[i]);
+        }
+    }
+
+    function drawRow(rowData) {
+        var row = $("<tr />")
+    
+        $("#tableData").append(row); //this will append tr element to table... keep its reference for a while since we will add cels into it
+        row.append($("<td>" + rowData.id + "</td>"));
+        row.append($("<td>" + rowData.borrowerName+ "</td>"));
+        row.append($("<td>" + rowData.borrowerAddress + "</td>"));
+        row.append($("<td>" + rowData.borrowerCity + "</td>"));
+        row.append($("<td>" + rowData.borrowerState + "</td>"));
+        row.append($("<td>" + rowData.borrowerZip+ "</td>"));
+        row.append($("<td>" + rowData.borrowerPhone+ "</td>"));
+    }
+    $.ajax({
+        dataType: "json",
+        url: 'cgi-bin/BorrowerAPIGet.py',
+        success: function (response) {
+            drawTable(response.borrowList);
+
+        }
+    });
+
+</script>
+
+</html>

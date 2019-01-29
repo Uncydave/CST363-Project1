@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+    crossorigin="anonymous"></script>
+
+
+<body>
+    <h1>CurrentBooks</h1>
+    <table id="tableData">
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Cost</th>
+        </tr>
+    </table>
+
+    <h1>Add Book Page</h1>
+    <p>Python and mysql connector</p>
+    <form action="./cgi-bin/bookAPIAdd.py" method="post">
+        Book Name:
+        <input type="text" name="bookTitle" />
+        <br/> Book Decription:
+        <input type="text" name="bookDescription" />
+        <br/> Book Cost:
+        <input type="text" name="bookCost" />
+        <br/>
+
+        <input type="submit" value="Submit-Book" name="Submit" />
+    </form>
+</body>
+<script>
+   
+    function drawTable(data) {
+     
+        for (var i = 0; i < data.length; i++) {
+            drawRow(data[i]);
+        }
+    }
+
+    function drawRow(rowData) {
+        var row = $("<tr />")
+    
+        $("#tableData").append(row); //this will append tr element to table... keep its reference for a while since we will add cels into it
+        row.append($("<td>" + rowData.id + "</td>"));
+        row.append($("<td>" + rowData.bookName + "</td>"));
+        row.append($("<td>" + rowData.bookDescription + "</td>"));
+        row.append($("<td>" + rowData.bookPrice + "</td>"));
+    }
+    $.ajax({
+        dataType: "json",
+        url: 'cgi-bin/BookAPIGet.py',
+        success: function (response) {
+            drawTable(response.bookList);
+
+        }
+    });
+
+</script>
+
+</html>

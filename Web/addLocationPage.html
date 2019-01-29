@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+    crossorigin="anonymous"></script>
+
+
+<body>
+    <h1>Locations</h1>
+    <table id="tableData">
+        <tr>
+            <th>Id</th>
+            <th>Aisle Number</th>
+            <th>Shelf Num</th>
+            <th>Row Num</th>
+        </tr>
+    </table>
+
+    <h1>Add Location Page</h1>
+    <iframe name="hiddenFrame" width="0" height="0" border="0" style="display: none;"></iframe>
+    <form action="./cgi-bin/LocationAPIAdd.py" method="post">
+        Aisle Num:
+        <input type="text" name="aisleNum" />
+        <br/> Shelf Num:
+        <input type="text" name="shelfNum" />
+        <br/> Row Number:
+        <input type="text" name="rowNum" />
+        <br/>
+
+        <input type="submit" value="Submit-Location" name="Submit" />
+    </form>
+    
+</body>
+<script>
+   
+    function drawTable(data) {
+     
+        for (var i = 0; i < data.length; i++) {
+            drawRow(data[i]);
+        }
+    }
+
+    function drawRow(rowData) {
+        var row = $("<tr />")
+    
+        $("#tableData").append(row); //this will append tr element to table... keep its reference for a while since we will add cels into it
+        row.append($("<td>" + rowData.id + "</td>"));
+        row.append($("<td>" + rowData.aisleNum + "</td>"));
+        row.append($("<td>" + rowData.shelfNum + "</td>"));
+        row.append($("<td>" + rowData.rowNum + "</td>"));
+    }
+    $.ajax({
+        dataType: "json",
+        url: 'cgi-bin/LocationAPIGet.py',
+        success: function (response) {
+            drawTable(response.locationList);
+
+        }
+    });
+
+</script>
+
+</html>
