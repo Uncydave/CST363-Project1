@@ -17,7 +17,7 @@
 
     <h1>Add Book Page</h1>
     <p>Python and mysql connector</p>
-    <form action="./cgi-bin/bookAPIAdd.py" method="post">
+    <form id="myform" action="./cgi-bin/bookAPIAdd.py" method="post">
         Book Name:
         <input type="text" name="bookTitle" />
         <br/> Book Decription:
@@ -28,6 +28,8 @@
 
         <input type="submit" value="Submit-Book" name="Submit" />
     </form>
+
+    <div id="form_output"></div>
 </body>
 <script>
    
@@ -56,6 +58,22 @@
         }
     });
 
+    $(document).ready(function () {
+    $('#myform').on('submit', function(e) {
+        e.preventDefault();
+        $.ajax({
+            url : $(this).attr('action') || window.location.pathname,
+            type: "GET",
+            data: $(this).serialize(),
+            success: function (data) {
+                $("#form_output").html(JSON.stringify(data));
+            },
+            error: function (jXHR, textStatus, errorThrown) {
+                alert(errorThrown);
+            }
+        });
+    });
+});
 </script>
 
 </html>

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+    crossorigin="anonymous"></script>
+
+
+<body>
+    <h1>Current Inventory</h1>
+    <table id="tableData">
+        <tr>
+            <th>Book Id</th>
+            <th>Location Id</th>
+            <th>Available</th>
+        </tr>
+    </table>
+
+    <h1>Inventory Page</h1>
+    <form id="myform" action="./cgi-bin/InventoryAPIAdd.py" method="post">
+        BookName
+        <select  name="bookID" id="dropdownBookName"></select>
+        <br/> Location ID
+        <select name="locationID" id="dropdownBookLocation"></select>
+        <br/> Available:
+ 
+        <select  name="available"  id="available">
+            <option  name="available" value="1">Set Available</option>
+            <option name="available" value="0">Set Not Available</option>
+        </select>
+        <br/>
+
+        <input type="submit" value="Submit-Inventory" name="Submit" />
+    </form>
+
+    <div id="form_output"></div>
+</body>
+<script>
+
+
+    var helpers =
+        {
+            buildDropdown: function (result, dropdown, emptyMessage) {
+                // Remove current options
+                dropdown.html('');
+                // Add the empty option with the empty message
+                dropdown.append('<option value="">' + emptyMessage + '</option>');
+                // Check result isnt empty
+                if (result != '') {
+                    // Loop through each of the results and append the option to the dropdown
+                    $.each(result, function (k, v) {
+                        dropdown.append('<option value="' + v.id + '" name="bookID"> [ID:'+ v.id +'] Name:' + v.bookName +  '</option>');
+                    });
+                }
+            },
+            buildDropdown2: function (result, dropdown, emptyMessage) {
+                // Remove current options
+                dropdown.html('');
+                // Add the empty option with the empty message
+                dropdown.append('<option value="">' + emptyMessage + '</option>');
+                // Check result isnt empty
+                if (result != '') {
+                    // Loop through each of the results and append the option to the dropdown
+                    $.each(result, function (k, v) {
+                        dropdown.append('<option value="' + v.id + '" name="locationID"> [ID:'+ v.id +'] AisleNum:' + v.aisleNum + '</option>');
+                    });
+                }
+            }
+        }
+    $.ajax({
+        dataType: "json",
+        url: 'cgi-bin/BookAPIGet.py',
+        success: function (response) {
+            helpers.buildDropdown(
+                response.bookList,
+                $('#dropdownBookName'),
+                'Select a Book'
+            );
+        }
+    });
+
+    $.ajax({
+        dataType: "json",
+        url: 'cgi-bin/LocationAPIGet.py',
+        success: function (response) {
+            helpers.buildDropdown2(
+                response.locationList,
+                $('#dropdownBookLocation'),
+                'Select a Location');
+        }
+    });
+    function drawTable(data) {
+
+        for (var i = 0; i < data.length; i++) {
+            drawRow(data[i]);
+        }
+    }
+
+    function drawRow(rowData) {
+        var row = $("<tr />")
+
+        $("#tableData").append(row); //this will append tr element to table... keep its reference for a while since we will add cels into it
+        row.append($("<td>" + rowData.bookID + "</td>"));
+        row.append($("<td>" + rowData.locationID + "</td>"));
+        row.append($("<td>" + (rowData.available == 1 ? "Available" : "Not Available") + "</td>"));
+    }
+    $.ajax({
+        dataType: "json",
+        url: 'cgi-bin/InventoryAPIGet.py',
+        success: function (response) {
+            drawTable(response.inventoryList);
+        }
+    });
+
+
+    $(document).ready(function () {
+    $('#myform').on('submit', function(e) {
+        e.preventDefault();
+        $.ajax({
+            url : $(this).attr('action') || window.location.pathname,
+            type: "GET",
+            data: $(this).serialize(),
+            success: function (data) {
+                $("#form_output").html(data);
+            },
+            error: function (jXHR, textStatus, errorThrown) {
+                alert(errorThrown);
+            }
+        });
+    });
+});
+</script>
+
+</html>

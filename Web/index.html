@@ -1,13 +1,39 @@
 <!DOCTYPE html>
 <html>
+<style>
+    table,
+    th,
+    td {
+        border: 1px solid black;
+        text-align: center; 
+        vertical-align: middle;
+    }
+
+ 
+</style>
 
 <body>
-    <h1>Landing Page For Book Warehouse</h1>
- <div>
-    <a href="./addBookPage.html">Add a New Book</a><br/>
-    <a href="./addBorrowerPage.html">Add a New Burrower</a><br/>
-    <a href="./addLocationPage.html">Add a New Location</a>
- </div> 
+    <h1>Book Warehouse Sys-Admin Page</h1>
+    <div>
+        <table>
+            <tr>
+                <td>
+                    <a href="./addBookPage.html">Add a New Book</a>
+                </td>
+                <td>
+                    <a href="./addBorrowerPage.html">Add a New Burrower</a>
+                </td>
+                <td>
+                    <a href="./addLocationPage.html">Add a New Location</a>
+                </td>
+            </tr>
+                <td id="center" colspan="3">
+                    <a href="./addInventoryPage.html">Add Inventory</a>
+                </td>
+          
+            </tr>
+        </table>
+    </div>
 </body>
 
 </html>

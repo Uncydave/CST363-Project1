@@ -17,7 +17,7 @@
 
     <h1>Add Location Page</h1>
     <iframe name="hiddenFrame" width="0" height="0" border="0" style="display: none;"></iframe>
-    <form action="./cgi-bin/LocationAPIAdd.py" method="post">
+    <form  id="myform" action="./cgi-bin/LocationAPIAdd.py" method="post">
         Aisle Num:
         <input type="text" name="aisleNum" />
         <br/> Shelf Num:
@@ -29,6 +29,7 @@
         <input type="submit" value="Submit-Location" name="Submit" />
     </form>
     
+    <div id="form_output"></div>
 </body>
 <script>
    
@@ -56,6 +57,23 @@
 
         }
     });
+
+  $(document).ready(function () {
+    $('#myform').on('submit', function(e) {
+        e.preventDefault();
+        $.ajax({
+            url : $(this).attr('action') || window.location.pathname,
+            type: "GET",
+            data: $(this).serialize(),
+            success: function (data) {
+                $("#form_output").html(JSON.stringify(data));
+            },
+            error: function (jXHR, textStatus, errorThrown) {
+                alert(errorThrown);
+            }
+        });
+    });
+});
 
 </script>
 
