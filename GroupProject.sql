@@ -1,54 +1,55 @@
-CREATE DATABASE `GroupProject`;
-USE `GroupProject`;
+DROP SCHEMA IF EXISTS `groupproject` ;
 
-CREATE TABLE `items` (
-  `itemID` int(11) NOT NULL,
-  `itemName` varchar(45) NOT NULL,
-  `itemDescription` varchar(45) NOT NULL,
-  `itemCost` decimal(10,2) NOT NULL,
+CREATE SCHEMA IF NOT EXISTS `groupproject`
+USE `groupproject`;
+
+CREATE TABLE `books` (
+  `bookID` int(11) NOT NULL AUTO_INCREMENT,
+  `bookTitle` varchar(45) NOT NULL,
+  `bookDescription` varchar(45) NOT NULL,
+  `bookCost` decimal(10,2) NOT NULL,
   PRIMARY KEY (`itemID`)
 );
 
-CREATE TABLE `storagelocations` (
-  `locationID` int(11) NOT NULL,
-  `locationName` varchar(45) NOT NULL,
-  `locationDescription` varchar(45) NOT NULL,
+CREATE TABLE `locations` (
+  `locationID` int(11) NOT NULL AUTO_INCREMENT,
+  `aisleNum` int(2) NOT NULL,
+  `shelfNum` int(2) NOT NULL,
+  `rowNum` int(1) NOT NULL,
   PRIMARY KEY (`locationID`)
 );
 
-CREATE TABLE `suppliers` (
-  `supplierID` int(11) NOT NULL,
-  `supplierName` varchar(45) NOT NULL,
-  `supplierAddress` varchar(45) NOT NULL,
-  `supplierCity` varchar(45) NOT NULL,
-  `supplierState` varchar(45) NOT NULL,
-  `supplierZip` varchar(45) NOT NULL,
-  `supplierPhone` char(12) NOT NULL,
-  PRIMARY KEY (`supplierID`)
+CREATE TABLE `borrowers` (
+  `borrowerID` int(11) NOT NULL AUTO_INCREMENT,
+  `borrowerName` varchar(45) NOT NULL,
+  `borrowerAddress` varchar(45) NOT NULL,
+  `borrowerCity` varchar(45) NOT NULL,
+  `borrowerState` varchar(45) NOT NULL,
+  `borrowerZip` varchar(45) NOT NULL,
+  `borrowerPhone` char(12) NOT NULL,
+  PRIMARY KEY (`borrowerID`)
 );
 
 CREATE TABLE `inventory` (
-  `itemID` int(11) NOT NULL,
+  `bookID` int(11) NOT NULL,
   `locationID` int(11) NOT NULL,
-  `quantity` int(11) NOT NULL DEFAULT '0',
-  `reorderLevel` int(4) NOT NULL,
-  `reorderStatus` varchar(45) NOT NULL,
+  `available` bit(1) NOT NULL,
   PRIMARY KEY (`itemID`,`locationID`),
+  KEY `bookID_idx` (`bookID`),
   KEY `locationID_idx` (`locationID`),
-  CONSTRAINT `itemIDforInventory` FOREIGN KEY (`itemID`) REFERENCES `items` (`itemid`),
-  CONSTRAINT `locationIDforInventory` FOREIGN KEY (`locationID`) REFERENCES `storagelocations` (`locationid`)
+  CONSTRAINT `bookIDforInventory` FOREIGN KEY (`bookID`) REFERENCES `books` (`bookID`),
+  CONSTRAINT `locationIDforInventory` FOREIGN KEY (`locationID`) REFERENCES `locations` (`locationID`)
 );
 
-CREATE TABLE `orders` (
-  `orderID` int(11) NOT NULL,
-  `itemID` int(11) NOT NULL,
-  `supplierID` int(11) NOT NULL,
-  `orderQuantity` int(4) NOT NULL,
-  `orderTotal` decimal(10,2) NOT NULL,
-  `orderDate` datetime NOT NULL,
-  PRIMARY KEY (`orderID`,`itemID`,`supplierID`),
-  KEY `itemID_idx` (`itemID`),
-  KEY `supplierID_idx` (`supplierID`),
-  CONSTRAINT `itemIDforOrders` FOREIGN KEY (`itemID`) REFERENCES `items` (`itemid`),
-  CONSTRAINT `supplierIDforOrders` FOREIGN KEY (`supplierID`) REFERENCES `suppliers` (`supplierid`)
+CREATE TABLE `loans` (
+  `loanID` int(11) NOT NULL,
+  `bookID` int(11) NOT NULL,
+  `borrowerID` int(11) NOT NULL,
+  `checkOutDate` datetime NOT NULL,
+  `dueDate` datetime NOT NULL,
+  PRIMARY KEY (`loanID`,`bookID`,`borrowerID`),
+  KEY `bookID_idx` (`bookID`),
+  KEY `borrowerID_idx` (`borrowerID`),
+  CONSTRAINT `bookIDforLoans` FOREIGN KEY (`bookID`) REFERENCES `books` (`bookID`),
+  CONSTRAINT `borrowerIDforLoans` FOREIGN KEY (`borrowerID`) REFERENCES `borrowers` (`borrowerID`)
 );
