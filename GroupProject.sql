@@ -1,6 +1,6 @@
-DROP SCHEMA IF EXISTS `groupproject` ;
+DROP SCHEMA IF EXISTS `groupproject`;
 
-CREATE SCHEMA IF NOT EXISTS `groupproject`
+CREATE SCHEMA IF NOT EXISTS `groupproject`;
 USE `groupproject`;
 
 CREATE TABLE `books` (
@@ -8,7 +8,7 @@ CREATE TABLE `books` (
   `bookTitle` varchar(45) NOT NULL,
   `bookDescription` varchar(45) NOT NULL,
   `bookCost` decimal(10,2) NOT NULL,
-  PRIMARY KEY (`itemID`)
+  PRIMARY KEY (`bookID`)
 );
 
 CREATE TABLE `locations` (
@@ -34,7 +34,7 @@ CREATE TABLE `inventory` (
   `bookID` int(11) NOT NULL,
   `locationID` int(11) NOT NULL,
   `available` bit(1) NOT NULL,
-  PRIMARY KEY (`itemID`,`locationID`),
+  PRIMARY KEY (`bookID`,`locationID`),
   KEY `bookID_idx` (`bookID`),
   KEY `locationID_idx` (`locationID`),
   CONSTRAINT `bookIDforInventory` FOREIGN KEY (`bookID`) REFERENCES `books` (`bookID`),
@@ -42,12 +42,11 @@ CREATE TABLE `inventory` (
 );
 
 CREATE TABLE `loans` (
-  `loanID` int(11) NOT NULL,
   `bookID` int(11) NOT NULL,
   `borrowerID` int(11) NOT NULL,
   `checkOutDate` datetime NOT NULL,
   `dueDate` datetime NOT NULL,
-  PRIMARY KEY (`loanID`,`bookID`,`borrowerID`),
+  PRIMARY KEY (`bookID`,`borrowerID`),
   KEY `bookID_idx` (`bookID`),
   KEY `borrowerID_idx` (`borrowerID`),
   CONSTRAINT `bookIDforLoans` FOREIGN KEY (`bookID`) REFERENCES `books` (`bookID`),
