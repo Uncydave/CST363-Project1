@@ -70,14 +70,25 @@ FROM groupproject.borrowers
 LEFT JOIN groupproject.loans ON groupproject.borrowers.borrowerID = groupproject.loans.borrowerID;
 
 CREATE TABLE `facts` (
-  `bookID` int(11) NOT NULL,
-  `locationID` int(11) NOT NULL,
-  `borrowerID` int(11) NOT NULL,
-  PRIMARY KEY (`bookID`,`locationID`, `borrowerID`),
+  `bookID` int(11) DEFAULT NULL,
+  `locationID` int(11) DEFAULT NULL,
+  `borrowerID` int(11) DEFAULT NULL,
+  `onLoan` bit(1) DEFAULT 0,
+  `inStock` bit(1) DEFAULT 0,
+  UNIQUE (`bookID`,`locationID`, `borrowerID`),
   KEY `bookID_idx` (`bookID`),
   KEY `locationID_idx` (`locationID`),
-  KEY `borrowerID_idx` (`borrowerID`),
-  CONSTRAINT `bookIDforFacts` FOREIGN KEY (`bookID`) REFERENCES `dimbooks` (`bookID`),
-  CONSTRAINT `locationIDforFacts` FOREIGN KEY (`locationID`) REFERENCES `dimlocations` (`locationID`),
-  CONSTRAINT `borrowerIDforFacts` FOREIGN KEY (`borrowerID`) REFERENCES `dimborrowers` (`borrowerID`)
+  KEY `borrowerID_idx` (`borrowerID`)
 );
+
+INSERT INTO facts(bookID, locationID, inStock)
+SELECT 	groupproject.inventory.bookID,
+		groupproject.inventory.locationID,
+        groupproject.inventory.available
+FROM groupproject.inventory;
+
+INSERT INTO facts(bookID, borrowerID, onLoan)
+SELECT 	groupproject.loans.bookID,
+		groupproject.loans.borrowerID,
+        1
+FROM groupproject.loans;
