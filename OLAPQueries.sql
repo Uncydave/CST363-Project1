@@ -15,4 +15,10 @@ SELECT * FROM groupprojectolap.dimborrowers where booksPastDue = 'N' and borrowe
 -- 5. find all the empty isles in all locations //able to fill
 select * from groupprojectolap.dimlocations where contents is null;
 
+-- 6. Gets a count of how many books are in inventory
+SELECT COUNT(inStock) AS 'Count of Available Books'
+FROM groupprojectolap.facts;
 
+-- 7. Gets a count of how many books on loan
+SELECT COUNT(onLoan) AS 'Count of Books on Loan'
+FROM groupprojectolap.facts;
