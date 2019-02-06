@@ -15,7 +15,7 @@ CREATE TABLE `dimbooks` (
 
 INSERT INTO dimbooks (bookID, bookTitle, bookDescription, bookCost, available, AisleRowShelf)
 SELECT 	groupproject.books.bookID,
-		groupproject.books.bookTitle,
+	groupproject.books.bookTitle,
         groupproject.books.bookDescription,
         groupproject.books.bookCost,
         groupproject.inventory.available,
@@ -36,7 +36,7 @@ CREATE TABLE `dimlocations` (
 
 INSERT INTO dimlocations (locationID, aisleNum, shelfNum, rowNum, locationName, contents)
 SELECT 	groupproject.locations.locationID,
-		groupproject.locations.aisleNum,
+	groupproject.locations.aisleNum,
         groupproject.locations.shelfNum,
         groupproject.locations.rowNum,
         CONCAT(groupproject.locations.aisleNum, '-', groupproject.locations.rowNum, '-', groupproject.locations.shelfNum) AS Location,
@@ -59,7 +59,7 @@ CREATE TABLE `dimborrowers` (
 
 INSERT INTO dimborrowers (borrowerID, borrowerName, borrowerAddress, borrowerCity, borrowerState, borrowerZip, borrowerPhone, booksPastDue)
 SELECT 	groupproject.borrowers.borrowerID,
-		groupproject.borrowers.borrowerName,
+	groupproject.borrowers.borrowerName,
         groupproject.borrowers.borrowerAddress,
         groupproject.borrowers.borrowerCity,
         groupproject.borrowers.borrowerState,
@@ -76,19 +76,23 @@ CREATE TABLE `facts` (
   `onLoan` bit(1) DEFAULT 0,
   `inStock` bit(1) DEFAULT 0,
   UNIQUE (`bookID`,`locationID`, `borrowerID`),
-  KEY `bookID_idx` (`bookID`),
-  KEY `locationID_idx` (`locationID`),
-  KEY `borrowerID_idx` (`borrowerID`)
+  FOREIGN KEY (`bookID`) REFERENCES dimbooks(`bookID`),
+  FOREIGN KEY (`locationID`) REFERENCES dimlocations(`locationID`),
+  FOREIGN KEY (`borrowerID`) REFERENCES dimborrowers(`borrowerID`)
 );
 
 INSERT INTO facts(bookID, locationID, inStock)
 SELECT 	groupproject.inventory.bookID,
-		groupproject.inventory.locationID,
+	groupproject.inventory.locationID,
         groupproject.inventory.available
 FROM groupproject.inventory;
 
 INSERT INTO facts(bookID, borrowerID, onLoan)
 SELECT 	groupproject.loans.bookID,
-		groupproject.loans.borrowerID,
+	groupproject.loans.borrowerID,
         1
 FROM groupproject.loans;
+
+CREATE VIEW `inventory` AS
+SELECT dimlocations.locationName AS Location, dimlocations.contents AS Contents
+FROM dimlocations;
